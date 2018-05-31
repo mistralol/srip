@@ -3,11 +3,7 @@
 #include <stdlib.h>
 #include <getopt.h>
 
-#include <mutex>
-
-#include <gst/gst.h>
-
-#include <main.h>
+#include "main.h"
 
 int verbose = 0;
 
@@ -46,7 +42,9 @@ int main(int argc, char **argv) {
 		}
 	}
 
-
+	GLibLogger GLLogger;
+    GstLogger GLogger;
+    GLogger.SetEnabled(true);
 
 	gst_init(&argc, &argv);
 
@@ -56,8 +54,8 @@ int main(int argc, char **argv) {
 }
 
 void Logger(int Type, const char *fmt, ...) {
-    static std::mutex mutex;
-    std::lock_guard<std::mutex> guard(mutex);
+    static Mutex mutex;
+    ScopedLock lock = ScopedLock(&mutex);
     va_list ap;
     va_start(ap, fmt);
     int res = vfprintf(stdout, fmt, ap);
