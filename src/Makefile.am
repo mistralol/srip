@@ -2,8 +2,8 @@
 
 bin_PROGRAMS=srip
 
-srip_CPPFLAGS=
-srip_LDFLAGS=
+srip_CPPFLAGS=$(GST_CFLAGS)
+srip_LDFLAGS=$(GST_LIBS)
 srip_SOURCES=main.cpp
 
 
