@@ -48,6 +48,11 @@ int main(int argc, char **argv) {
 
 	gst_init(&argc, &argv);
 
+    //FIXME: Find Source index from pulseaudio based on application name.
+
+    //FIXME: Insert sniffer to watch for name changes
+
+    //FIXME: Insert output pipelines to encode audio to files
 
 	gst_deinit();
 	return 0;
