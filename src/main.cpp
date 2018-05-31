@@ -51,6 +51,8 @@ int main(int argc, char **argv) {
     //FIXME: Find Source index from pulseaudio based on application name.
 
     //FIXME: Insert sniffer to watch for name changes
+    DBUSMedia Watcher;
+    Watcher.Run();
 
     //FIXME: Insert output pipelines to encode audio to files
 

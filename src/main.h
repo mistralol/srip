@@ -15,6 +15,7 @@
 #include "GstLogger.h"
 #include "GLibLogger.h"
 #include "PipelineBasic.h"
+#include "DBUSMedia.h"
 
 
 extern int verbose;

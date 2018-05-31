@@ -33,6 +33,18 @@ AC_CHECK_LIB([pthread], [pthread_mutex_init], [], [
 	AC_MSG_ERROR([You need to have pthread installed])
 ])
 
+PKG_CHECK_MODULES(DBUS, [
+  dbus-1 >= 0.29.1
+], [
+  AC_SUBST(DBUS_CFLAGS)
+  AC_SUBST(DBUS_LIBS)
+], [
+  AC_MSG_ERROR([
+      You need to install or upgrade the dbus dev package
+  ])
+])
+
+
 dnl required versions of gstreamer and plugins-base
 GST_REQUIRED=1.12.0
 GSTPB_REQUIRED=1.12.0
