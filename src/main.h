@@ -6,8 +6,11 @@
 
 #include <string>
 #include <sstream>
+#include <functional>
 
 #include <gst/gst.h>
+#include <gst/app/gstappsrc.h>
+#include <gst/app/gstappsink.h>
 
 #include "Time.h"
 #include "Mutex.h"
@@ -15,6 +18,7 @@
 #include "GstLogger.h"
 #include "GLibLogger.h"
 #include "PipelineBasic.h"
+#include "PulseSource.h"
 #include "DBUSMedia.h"
 
 

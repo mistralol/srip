@@ -16,7 +16,6 @@ static void print_help(FILE *fp, char *app) {
 }
 
 int main(int argc, char **argv) {
-
 	const char *opts = "hd";
     int longindex = 0;
     int c = 0;
@@ -49,6 +48,12 @@ int main(int argc, char **argv) {
 	gst_init(&argc, &argv);
 
     //FIXME: Find Source index from pulseaudio based on application name.
+    //Then attach to that
+    PulseSource Source = PulseSource();
+
+    //Source.SetFunction();
+
+    Source.Start();
 
     //FIXME: Insert sniffer to watch for name changes
     DBUSMedia Watcher;
