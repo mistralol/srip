@@ -11,6 +11,7 @@ srip_SOURCES=Mutex.cpp \
             GstLogger.cpp \
             PipelineBasic.cpp \
             PulseSource.cpp \
+            OutputManager.cpp \
             DBUSMedia.cpp \
             main.cpp
 

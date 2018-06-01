@@ -50,16 +50,17 @@ int main(int argc, char **argv) {
     //FIXME: Find Source index from pulseaudio based on application name.
     //Then attach to that
     PulseSource Source = PulseSource();
+    DBUSMedia Watcher;
+    OutputManager Output;
 
-    //Source.SetFunction();
+    //FIXME: Add outputs to OutputManager
 
+    Source.SetFunction(std::bind(&OutputManager::PushBuffer, &Output, std::placeholders::_1, std::placeholders::_2));
     Source.Start();
 
-    //FIXME: Insert sniffer to watch for name changes
-    DBUSMedia Watcher;
-    Watcher.Run();
+    //FIXME: Glue File name extraction to OutputManager
+    Watcher.Run(); //FIXME: This currently never returns
 
-    //FIXME: Insert output pipelines to encode audio to files
 
 	gst_deinit();
 	return 0;

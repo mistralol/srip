@@ -4,9 +4,11 @@
 #include <unistd.h>
 #include <syslog.h>
 
+#include <list>
 #include <string>
 #include <sstream>
 #include <functional>
+#include <memory>
 
 #include <gst/gst.h>
 #include <gst/app/gstappsrc.h>
@@ -20,7 +22,8 @@
 #include "PipelineBasic.h"
 #include "PulseSource.h"
 #include "DBUSMedia.h"
-
+#include "IOutputPipeline.h"
+#include "OutputManager.h"
 
 extern int verbose;
 
