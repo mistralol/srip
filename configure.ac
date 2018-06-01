@@ -11,7 +11,14 @@ AC_PROG_CC
 AC_PROG_CXX
 AC_PROG_LIBTOOL
 
-AX_CXX_COMPILE_STDCXX_11(noext, mandatory)
+m4_ifdef([AX_CXX_COMPILE_STDCXX_11],
+        [
+               AX_CXX_COMPILE_STDCXX_11(noext, mandatory)
+        ],
+        [
+                AC_SUBST([AM_CXXFLAGS], ['-std=c++11'])
+        ]
+)
 
 m4_ifdef([AX_COMPILER_FLAGS],
 	[
