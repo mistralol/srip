@@ -54,6 +54,8 @@ int main(int argc, char **argv) {
     OutputManager Output;
 
     //FIXME: Add outputs to OutputManager
+    std::shared_ptr<IOutputPipeline> OWav = std::make_shared<OutputWav>();
+    Output.PipelineAdd(OWav);
 
     Source.SetFunction(std::bind(&OutputManager::PushBuffer, &Output, std::placeholders::_1, std::placeholders::_2));
     Source.Start();

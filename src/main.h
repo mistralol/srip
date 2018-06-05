@@ -24,6 +24,7 @@
 #include "DBUSMedia.h"
 #include "IOutputPipeline.h"
 #include "OutputManager.h"
+#include "OutputWav.h"
 
 extern int verbose;
 
