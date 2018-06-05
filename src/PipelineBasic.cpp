@@ -188,6 +188,10 @@ void PipelineBasic::OnParseError(const gchar *msg)
 	LogError("Pipeline '%s' Parse error: %s", m_name.c_str(), msg);
 }
 
+void PipelineBasic::OnPreStart() {
+
+}
+
 void PipelineBasic::OnStart(GstElement *pipeline)
 {
 	LogInfo("Pipeline '%s' Started Pipe: %s", m_name.c_str(), m_pipelinestr.c_str());
@@ -246,6 +250,8 @@ void *PipelineBasic::Run(void *arg)
 {
 	PipelineBasic *self = (class PipelineBasic *) arg;
 	GstElement *pipeline = NULL;
+
+	self->OnPreStart();
 
 	while(self->m_running)
 	{

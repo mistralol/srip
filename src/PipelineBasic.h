@@ -30,6 +30,7 @@ class PipelineBasic {
 
 	protected:
 		virtual void OnParseError(const gchar *msg);
+		virtual void OnPreStart();
 		virtual void OnStart(GstElement *pipeline);
 		virtual void OnStartFailure(GstElement *pipeline);
 
