@@ -41,8 +41,8 @@ void OutputWav::PushBuffer(GstCaps *caps, GstBuffer *buffer) {
     if (m_thesrc) {
         GstBuffer *copy = gst_buffer_copy(buffer);
         //FIXME: Timestamps
-        GST_BUFFER_PTS(copy) = 0;
-        GST_BUFFER_PTS(copy) = 0;
+        GST_BUFFER_PTS(copy) = GST_CLOCK_TIME_NONE;
+        GST_BUFFER_PTS(copy) = GST_CLOCK_TIME_NONE;
 
         gst_app_src_set_caps(m_thesrc, caps);
         GstFlowReturn ret = gst_app_src_push_buffer(m_thesrc, copy);
