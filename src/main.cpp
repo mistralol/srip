@@ -12,21 +12,35 @@ static void print_help(FILE *fp, char *app) {
     fprintf(fp, "\n");
     fprintf(fp, " -h --help           Print this help\n");
     fprintf(fp, " -d --debug          Switch on debug level logging\n");
+    fprintf(fp, " -V --version        Print version and exit\n");
+    fprintf(fp, "\n");
+    fprintf(fp, "    --output-wav     Output to wav file\n");
     fprintf(fp, "\n");
 }
 
 int main(int argc, char **argv) {
-	const char *opts = "hd";
+	const char *opts = "hdV";
     int longindex = 0;
     int c = 0;
     struct option loptions[] {
         {"help", 0, 0, 'h'},
         {"debug", 0, 0, 'd'},
+        {"version", 0, 0, 'v'},
+        {"output-wav", 0, 0, 0},
         {0, 0, 0, 0}
     };
+    bool EnableOutputWav = false;
 
     while( (c = getopt_long(argc, argv, opts, loptions, &longindex)) >= 0) {
 		switch(c) {
+            case 0:
+                {
+                    std::string arg = loptions[longindex].name;
+                    if (arg == "output-wav") {
+                        EnableOutputWav = true;
+                    }
+                }
+                break;
 			case 'h':
 				print_help(stdout, argv[0]);
 				exit(EXIT_SUCCESS);
@@ -34,6 +48,10 @@ int main(int argc, char **argv) {
 			case 'd':
 				verbose++;
 				break;
+            case 'v':
+                printf("Version: %s\n", PACKAGE_VERSION);
+                exit(EXIT_SUCCESS);
+                break;
 			default:
 				LogError("Unknown Option");
 				exit(EXIT_FAILURE);
@@ -52,15 +70,22 @@ int main(int argc, char **argv) {
     PulseSource Source = PulseSource();
     DBUSMedia Watcher;
     OutputManager Output;
+    bool HaveOutputs = false;
 
-    //FIXME: Add outputs to OutputManager
-    std::shared_ptr<IOutputPipeline> OWav = std::make_shared<OutputWav>();
-    Output.PipelineAdd(OWav);
+    //Default to wave file if it doesn't have any other outputs
+    if (EnableOutputWav || HaveOutputs == false) {
+        if (HaveOutputs) {
+            LogInfo("No outputs specified defaulting to wav file");
+        }
+        std::shared_ptr<IOutputPipeline> OWav = std::make_shared<OutputWav>();
+        Output.PipelineAdd(OWav);
+    }
+
+    //FIXME: Glue File name extraction to OutputManager
 
     Source.SetFunction(std::bind(&OutputManager::PushBuffer, &Output, std::placeholders::_1, std::placeholders::_2));
     Source.Start();
 
-    //FIXME: Glue File name extraction to OutputManager
     Watcher.Run(); //FIXME: This currently never returns
 
 
