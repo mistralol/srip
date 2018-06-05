@@ -15,6 +15,7 @@ static void print_help(FILE *fp, char *app) {
     fprintf(fp, " -V --version        Print version and exit\n");
     fprintf(fp, "\n");
     fprintf(fp, "    --output-wav     Output to wav file\n");
+    fprintf(fp, "    --output-lame    Output to mp3 file using lame encoder\n");
     fprintf(fp, "\n");
 }
 
@@ -27,9 +28,11 @@ int main(int argc, char **argv) {
         {"debug", 0, 0, 'd'},
         {"version", 0, 0, 'v'},
         {"output-wav", 0, 0, 0},
+        {"output-lame", 0, 0, 0},
         {0, 0, 0, 0}
     };
     bool EnableOutputWav = false;
+    bool EnableOutputLame = false;
 
     while( (c = getopt_long(argc, argv, opts, loptions, &longindex)) >= 0) {
 		switch(c) {
@@ -38,6 +41,11 @@ int main(int argc, char **argv) {
                     std::string arg = loptions[longindex].name;
                     if (arg == "output-wav") {
                         EnableOutputWav = true;
+                    } else if (arg == "output-lame") {
+                        EnableOutputLame = true;
+                    } else {
+                        LogError("Unknown option %s", arg.c_str());
+                        exit(EXIT_FAILURE);
                     }
                 }
                 break;
@@ -72,13 +80,19 @@ int main(int argc, char **argv) {
     OutputManager Output;
     bool HaveOutputs = false;
 
+    if (EnableOutputLame) {
+        HaveOutputs = true;
+        std::shared_ptr<IOutputPipeline> tmp = std::make_shared<OutputLame>();
+        Output.PipelineAdd(tmp);
+    }
+
     //Default to wave file if it doesn't have any other outputs
     if (EnableOutputWav || HaveOutputs == false) {
         if (HaveOutputs) {
             LogInfo("No outputs specified defaulting to wav file");
         }
-        std::shared_ptr<IOutputPipeline> OWav = std::make_shared<OutputWav>();
-        Output.PipelineAdd(OWav);
+        std::shared_ptr<IOutputPipeline> tmp = std::make_shared<OutputWav>();
+        Output.PipelineAdd(tmp);
     }
 
     //FIXME: Glue File name extraction to OutputManager
@@ -87,7 +101,6 @@ int main(int argc, char **argv) {
     Source.Start();
 
     Watcher.Run(); //FIXME: This currently never returns
-
 
 	gst_deinit();
 	return 0;

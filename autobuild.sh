@@ -4,7 +4,7 @@ echo Building
 
 make all check
 
-FILES=`find . -type f |egrep -E "*\.[h|c|cpp|am]"`
+FILES=`find . -type f |egrep -E "*\.[h|c|cpp|am]"|grep -v unknown`
 
 
 for i in `pidof srip` ; do

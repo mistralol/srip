@@ -13,6 +13,7 @@ srip_SOURCES=Mutex.cpp \
             PulseSource.cpp \
             OutputManager.cpp \
             OutputWav.cpp \
+            OutputLame.cpp \
             DBUSMedia.cpp \
             main.cpp
 

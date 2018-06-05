@@ -25,6 +25,7 @@
 #include "IOutputPipeline.h"
 #include "OutputManager.h"
 #include "OutputWav.h"
+#include "OutputLame.h"
 
 extern int verbose;
 
