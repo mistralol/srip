@@ -16,6 +16,5 @@ class OutputScopeBasic : public IOutputPipeline {
         static GstFlowReturn OnNewSample(GstElement* object, gpointer user_data);
 
         Mutex m_mutex;
-        std::string m_filename;
         GstAppSrc *m_thesrc;
 };

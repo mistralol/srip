@@ -1,7 +1,6 @@
 #include "main.h"
 
 OutputScopeBasic::OutputScopeBasic() :
-    m_filename(""),
     m_thesrc(NULL)
 {
 
@@ -53,6 +52,5 @@ void OutputScopeBasic::PushBuffer(GstCaps *caps, GstBuffer *buffer) {
 }
 
 void OutputScopeBasic::SetFileName(const std::string filename) {
-    ScopedLock lock(&m_mutex);
-    m_filename = filename + ".mp3";
+    //ScopedLock lock(&m_mutex);
 }
