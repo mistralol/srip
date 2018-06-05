@@ -20,3 +20,5 @@ libtool
 .gdb_history
 src/srip
 core
+*.wav
+*.mp3
