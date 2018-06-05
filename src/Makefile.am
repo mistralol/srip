@@ -14,6 +14,7 @@ srip_SOURCES=Mutex.cpp \
             OutputManager.cpp \
             OutputWav.cpp \
             OutputLame.cpp \
+            OutputScopeBasic.cpp \
             DBUSMedia.cpp \
             main.cpp
 

@@ -14,8 +14,9 @@ static void print_help(FILE *fp, char *app) {
     fprintf(fp, " -d --debug          Switch on debug level logging\n");
     fprintf(fp, " -V --version        Print version and exit\n");
     fprintf(fp, "\n");
-    fprintf(fp, "    --output-wav     Output to wav file\n");
-    fprintf(fp, "    --output-lame    Output to mp3 file using lame encoder\n");
+    fprintf(fp, "    --output-wav         Output to wav file\n");
+    fprintf(fp, "    --output-lame        Output to mp3 file using lame encoder\n");
+    fprintf(fp, "    --output-scopebasic  Output to a basic scope (graphics)\n");
     fprintf(fp, "\n");
 }
 
@@ -29,10 +30,12 @@ int main(int argc, char **argv) {
         {"version", 0, 0, 'v'},
         {"output-wav", 0, 0, 0},
         {"output-lame", 0, 0, 0},
+        {"output-scopebasic", 0, 0, 0},
         {0, 0, 0, 0}
     };
     bool EnableOutputWav = false;
     bool EnableOutputLame = false;
+    bool EnableScopeBasic = false;
 
     while( (c = getopt_long(argc, argv, opts, loptions, &longindex)) >= 0) {
 		switch(c) {
@@ -43,6 +46,8 @@ int main(int argc, char **argv) {
                         EnableOutputWav = true;
                     } else if (arg == "output-lame") {
                         EnableOutputLame = true;
+                    } else if (arg == "output-scopebasic") {
+                        EnableScopeBasic = true;
                     } else {
                         LogError("Unknown option %s", arg.c_str());
                         exit(EXIT_FAILURE);
@@ -87,6 +92,12 @@ int main(int argc, char **argv) {
     if (EnableOutputLame) {
         HaveOutputs = true;
         std::shared_ptr<IOutputPipeline> tmp = std::make_shared<OutputLame>();
+        Output.PipelineAdd(tmp);
+    }
+
+    if (EnableScopeBasic) {
+        HaveOutputs = true;
+        std::shared_ptr<IOutputPipeline> tmp = std::make_shared<OutputScopeBasic>();
         Output.PipelineAdd(tmp);
     }
 

@@ -26,6 +26,7 @@
 #include "OutputManager.h"
 #include "OutputWav.h"
 #include "OutputLame.h"
+#include "OutputScopeBasic.h"
 
 extern int verbose;
 
