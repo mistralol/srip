@@ -67,9 +67,13 @@ int main(int argc, char **argv) {
 		}
 	}
 
-	GLibLogger GLLogger;
-    GstLogger GLogger;
-    GLogger.SetEnabled(true);
+    std::unique_ptr<GLibLogger> GLLogger;
+    std::unique_ptr<GstLogger> GLogger;
+    if (verbose) {
+        GLLogger.reset(new GLibLogger());
+        GLogger.reset(new GstLogger());
+        GLogger->SetEnabled(true);
+    }
 
 	gst_init(&argc, &argv);
 
@@ -101,6 +105,11 @@ int main(int argc, char **argv) {
     Source.Start();
 
     Watcher.Run(); //FIXME: This currently never returns
+
+    if (verbose) {
+        GLLogger.reset();
+        GLogger.reset();
+    }
 
 	gst_deinit();
 	return 0;
