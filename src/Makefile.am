@@ -18,3 +18,18 @@ srip_SOURCES=Mutex.cpp \
             DBUSMedia.cpp \
             main.cpp
 
+noinst_HEADERS=main.h \
+            DBUSMedia.h \
+            GstLogger.h \
+            OutputLame.h \
+            OutputScopeBasic.h \
+            PipelineBasic.h \
+            ScopedLock.h \
+            GLibLogger.h \
+            IOutputPipeline.h \
+            Mutex.h \
+            OutputManager.h \
+            OutputWav.h \
+            PulseSource.h \
+            Time.h
+
