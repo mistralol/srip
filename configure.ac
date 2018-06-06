@@ -1,4 +1,4 @@
-AC_INIT(FVR, 1.0.0, james@stev.org)
+AC_INIT(srip, 1.0.0, james@stev.org)
 AC_CONFIG_AUX_DIR(config)
 AC_CONFIG_SRCDIR([src/main.cpp])
 AC_CONFIG_MACRO_DIR([m4])
