@@ -33,11 +33,11 @@ m4_ifdef([AX_COMPILER_FLAGS],
 
 dnl give error and exit if we don't have pkgconfig
 AC_CHECK_PROG(HAVE_PKGCONFIG, pkg-config, [ ], [
-  AC_MSG_ERROR([You need to have pkg-config installed!])
+  AC_MSG_ERROR([You need to have pkg-config installed])
 ])
 
 AC_CHECK_LIB([pthread], [pthread_mutex_init], [], [
-	AC_MSG_ERROR([You need to have pthread installed])
+	AC_MSG_ERROR([You need to have libpthread installed])
 ])
 
 PKG_CHECK_MODULES(DBUS, [
@@ -51,6 +51,51 @@ PKG_CHECK_MODULES(DBUS, [
   ])
 ])
 
+PKG_CHECK_MODULES(GLIB, [
+  glib-2.0 >= 0.29.1
+], [
+  AC_SUBST(GLIB_CFLAGS)
+  AC_SUBST(GLIB_LIBS)
+], [
+  AC_MSG_ERROR([
+      You need to install or upgrade the glib-2.0 package
+  ])
+])
+
+
+PKG_CHECK_MODULES(JSONGLIB, [
+  json-glib-1.0 >= 0.29.1
+], [
+  AC_SUBST(JSONGLIB_CFLAGS)
+  AC_SUBST(JSONGLIB_LIBS)
+], [
+  AC_MSG_ERROR([
+      You need to install or upgrade the json-glib-1.0 package
+  ])
+])
+
+dnl Check for jsoncpp
+PKG_CHECK_MODULES(JSON, [
+        jsoncpp >= 0.6.0
+], [
+        AC_SUBST(JSON_CFLAGS)
+        AC_SUBST(JSON_LIBS)
+], [
+        AC_MSG_ERROR([
+                You need to install or upgrade jsoncpp
+        ])
+])
+
+PKG_CHECK_MODULES(GIOUNIX, [
+  gio-unix-2.0 >= 0.29.1
+], [
+  AC_SUBST(GIOUNIX_CFLAGS)
+  AC_SUBST(GIOUNIX_LIBS)
+], [
+  AC_MSG_ERROR([
+      You need to install or upgrade the gio-unix-2.0 package
+  ])
+])
 
 dnl required versions of gstreamer and plugins-base
 GST_REQUIRED=1.12.0

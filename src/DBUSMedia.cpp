@@ -1,5 +1,7 @@
 
 #include <dbus/dbus.h>
+#include <json-glib/json-glib.h>
+#include <json/json.h>
 
 #include "main.h"
 
@@ -13,86 +15,99 @@ DBUSMedia::~DBUSMedia() {
 
 }
 
+static void OnSignal(GDBusConnection *conn,
+			     const gchar *sender_name,
+			     const gchar *object_path,
+			     const gchar *interface_name,
+			     const gchar *signal_name,
+			     GVariant *parameters,
+			     gpointer data)
+{
+    if (g_strcmp0("PropertiesChanged", signal_name) != 0)
+        return; /* Not relevent */
+    LogDebug("OnSignal Sender: %s path: %s interface: %s signal %s", sender_name, object_path, interface_name, signal_name);
+    //gchar *str = g_variant_print(parameters, TRUE);
+    //LogInfo("Signal: %s", str);
+    //g_free(str);
+
+    /* Get this stuff out of glib's fucked up api's (GVariant) */
+    JsonNode *gson = json_gvariant_serialize(parameters);
+    JsonGenerator *gen = json_generator_new();
+    json_generator_set_root (gen, gson);
+    gchar *str = json_generator_to_data (gen, NULL);
+    g_object_unref(gen);
+    json_node_free(gson);
+
+    Json::Value root;
+    try {
+        #pragma GCC diagnostic push
+        #pragma GCC diagnostic ignored "-Winline"
+        Json::Reader reader;
+        reader.parse(str, root);
+        #pragma GCC diagnostic pop
+    } catch(std::exception &ex) {
+        abort(); //FIXME: Do what exactly?
+    }
+    g_free(str);
+
+    std::stringstream ss;
+    ss << root;
+    LogDebug("JSON: %s", ss.str().c_str());
+
+    try {
+        std::string Album = root[1]["Metadata"]["xesam:album"].asString();
+        std::string Artist = root[1]["Metadata"]["xesam:artist"][0].asString();
+        std::string Title = root[1]["Metadata"]["xesam:title"].asString();
+        LogDebug("New Song Info: %s - %s - %s", Album.c_str(), Artist.c_str(), Title.c_str());
+    } catch(std::exception &ex) {
+        LogError("Error reading signal: %s", ex.what());
+    }
+}
 
 void DBUSMedia::Run() {
-    DBusMessage* msg;
-    DBusMessageIter args;
-    DBusConnection* conn;
-    DBusError err;
-    int ret;
-    char* sigvalue;
+    GMainLoop* loop = g_main_loop_new (NULL, FALSE);
+    GError *error = NULL;
+    GDBusConnection *conn = g_bus_get_sync (G_BUS_TYPE_SESSION, NULL, NULL);
+    GDBusProxy *proxy = g_dbus_proxy_new_sync(conn,
+        G_DBUS_PROXY_FLAGS_NONE,
+        NULL,
+        "org.mpris.MediaPlayer2.Player",
+        "/org/mpris/MediaPlayer2",
+        "org.freedesktop.DBus.Properties",
+        NULL,
+        &error
+    );
 
-    LogDebug("Listening for signals\n");
-
-    // initialise the errors
-    dbus_error_init(&err);
-
-    // connect to the bus and check for errors
-    conn = dbus_bus_get(DBUS_BUS_SESSION, &err);
-    if (dbus_error_is_set(&err)) {
-      LogError("Connection Error (%s)", err.message);
-      dbus_error_free(&err);
+    if (error) {
+        //FIXME: Make this meaningful
+        LogCritical("Unknown DBUS Error");
+        g_error_free(error);
     }
-    if (NULL == conn) {
-        LogCritical("dbus_bus_get failed!!");
+
+    if (!conn || !proxy) {
+        LogCritical("Fails to get connection to dbus");
         abort();
     }
 
-    // request our name on the bus and check for errors
-    ret = dbus_bus_request_name(conn, "srip.sniffer", DBUS_NAME_FLAG_REPLACE_EXISTING , &err);
-    if (dbus_error_is_set(&err)) {
-        LogError("Name Error (%s)", err.message);
-        dbus_error_free(&err);
-    }
-    if (DBUS_REQUEST_NAME_REPLY_PRIMARY_OWNER != ret) {
-        LogCritical("I don't own my name on dbus!!");
-        abort();
-    }
+    int id = g_dbus_connection_signal_subscribe(conn,
+            NULL,
+            "org.freedesktop.DBus.Properties",
+            "PropertiesChanged",
+            "/org/mpris/MediaPlayer2",
+            NULL,
+            G_DBUS_SIGNAL_FLAGS_NONE,
+            OnSignal,
+            this,
+            NULL
+        );
 
-    // add a rule for which messages we want to see
-    dbus_bus_add_match(conn, "type='signal',interface='org.freedesktop.DBus.Properties'", &err); // see signals from the given interface
-    dbus_connection_flush(conn);
-    if (dbus_error_is_set(&err)) {
-        LogError("Match Error (%s)\n", err.message);
-        abort();
+    while(m_running) {
+        g_main_loop_run(loop);
     }
 
-    // loop listening for signals being emmitted
-    while (m_running) {
-        // non blocking read of the next available message
-        dbus_connection_read_write(conn, 0);
-        msg = dbus_connection_pop_message(conn);
+    g_main_loop_unref(loop);
 
-        // loop again if we haven't read a message
-        if (NULL == msg) {
-            //usleep(10000);
-            continue;
-        }
+    g_dbus_connection_signal_unsubscribe(conn, id);
 
-        LogDebug("Read some signal Sender: %s Interface: %s Member: %s Path: %s",
-                dbus_message_get_sender(msg),
-                dbus_message_get_interface(msg),
-                dbus_message_get_member(msg),
-                dbus_message_get_path(msg)
-            );
-
-        // check if the message is a signal from the correct interface and with the correct name
-        if (dbus_message_is_signal(msg, "org.freedesktop.DBus.Properties", "PropertiesChanged")) {
-            if (!dbus_message_iter_init(msg, &args)) {
-                LogError("Message Has No Parameters");
-            } else if (DBUS_TYPE_STRING != dbus_message_iter_get_arg_type(&args)) {
-                LogError("Argument is not string!");
-            } else {
-                dbus_message_iter_get_basic(&args, &sigvalue);
-            }
-            LogInfo("Got Signal with value %s\n", sigvalue);
-            if (strcmp(sigvalue, "org.mpris.MediaPlayer2.Player") == 0) {
-                LogInfo("Got Some Song INFO!!!");
-            }
-        }
-
-      // free the message
-      dbus_message_unref(msg);
-   }
-
+    gst_object_unref(proxy);
 }

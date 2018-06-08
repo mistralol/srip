@@ -6,6 +6,7 @@
 #include <string.h>
 
 #include <list>
+#include <map>
 #include <string>
 #include <sstream>
 #include <functional>
