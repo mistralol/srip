@@ -16,7 +16,6 @@ srip_SOURCES=Mutex.cpp \
             OutputLame.cpp \
             OutputScopeBasic.cpp \
             DBUSMedia.cpp \
-            mpris.c \
             main.cpp
 
 noinst_HEADERS=main.h \
