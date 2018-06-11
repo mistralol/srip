@@ -29,6 +29,7 @@ void OutputManager::SetFilename(const std::string &Album, const std::string &Art
             it->Stop();
     }
 
+    LogInfo("New Song Name: %s", filename.c_str());
     m_currentfile = filename;
 
     if (!Album.empty()) {
