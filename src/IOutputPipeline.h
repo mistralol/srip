@@ -3,6 +3,7 @@ class IOutputPipeline : public PipelineBasic {
     public:
         virtual ~IOutputPipeline() { };
 
+        virtual void Stop() = 0;
         virtual void OnPreStart() = 0;
 
         virtual void PushBuffer(GstCaps *caps, GstBuffer *buffer) = 0;

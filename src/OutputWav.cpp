@@ -12,6 +12,13 @@ OutputWav::~OutputWav() {
 
 }
 
+void OutputWav::Stop() {
+    if (m_thesrc) {
+        gst_app_src_end_of_stream(m_thesrc);
+    }
+    PipelineBasic::Stop();
+}
+
 void OutputWav::OnPreStart() {
     ScopedLock lock(&m_mutex);
     std::stringstream ss;

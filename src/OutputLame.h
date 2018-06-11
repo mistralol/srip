@@ -4,6 +4,8 @@ class OutputLame : public IOutputPipeline {
         OutputLame();
         ~OutputLame();
 
+        void Stop();
+
         void OnPreStart();
         void OnStart(GstElement *pipeline);
         void OnStop(GstElement *pipeline);

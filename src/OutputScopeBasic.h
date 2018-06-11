@@ -4,6 +4,8 @@ class OutputScopeBasic : public IOutputPipeline {
         OutputScopeBasic();
         ~OutputScopeBasic();
 
+        void Stop();
+
         void OnPreStart();
         void OnStart(GstElement *pipeline);
         void OnStop(GstElement *pipeline);

@@ -5,6 +5,8 @@ class OutputWav : public IOutputPipeline {
         OutputWav();
         ~OutputWav();
 
+        void Stop();
+
         void OnPreStart();
         void OnStart(GstElement *pipeline);
         void OnStop(GstElement *pipeline);
