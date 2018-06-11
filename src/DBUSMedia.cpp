@@ -1,12 +1,12 @@
 
-#include <dbus/dbus.h>
 #include <json-glib/json-glib.h>
 #include <json/json.h>
 
 #include "main.h"
 
-DBUSMedia::DBUSMedia() :
-    m_running(true)
+DBUSMedia::DBUSMedia(OutputManager *OutputManager) :
+    m_running(true),
+    m_OutputManager(OutputManager)
 {
 
 }
@@ -15,7 +15,7 @@ DBUSMedia::~DBUSMedia() {
 
 }
 
-static void OnSignal(GDBusConnection *conn,
+void DBUSMedia::OnSignal(GDBusConnection *conn,
 			     const gchar *sender_name,
 			     const gchar *object_path,
 			     const gchar *interface_name,
@@ -23,6 +23,8 @@ static void OnSignal(GDBusConnection *conn,
 			     GVariant *parameters,
 			     gpointer data)
 {
+    DBUSMedia *self = (DBUSMedia *) data;
+
     if (g_strcmp0("PropertiesChanged", signal_name) != 0)
         return; /* Not relevent */
     LogDebug("OnSignal Sender: %s path: %s interface: %s signal %s", sender_name, object_path, interface_name, signal_name);
@@ -59,6 +61,7 @@ static void OnSignal(GDBusConnection *conn,
         std::string Artist = root[1]["Metadata"]["xesam:artist"][0].asString();
         std::string Title = root[1]["Metadata"]["xesam:title"].asString();
         LogDebug("New Song Info: %s - %s - %s", Album.c_str(), Artist.c_str(), Title.c_str());
+        self->m_OutputManager->SetFilename(Album, Artist, Title);
     } catch(std::exception &ex) {
         LogError("Error reading signal: %s", ex.what());
     }

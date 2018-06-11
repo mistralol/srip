@@ -6,7 +6,7 @@ class OutputManager {
         ~OutputManager();
 
         void PushBuffer(GstCaps *caps, GstBuffer *buffer);
-        void SetFileName(const std::string &filename);
+        void SetFilename(const std::string &Album, const std::string &Artist, const std::string &Song);
 
         void PipelineAdd(std::shared_ptr<IOutputPipeline> pipeline);
         void PipelineRemoveAll();

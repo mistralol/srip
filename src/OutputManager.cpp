@@ -18,31 +18,37 @@ void OutputManager::PushBuffer(GstCaps *caps, GstBuffer *buffer) {
     }
 }
 
-void OutputManager::SetFileName(const std::string &filename) {
+void OutputManager::SetFilename(const std::string &Album, const std::string &Artist, const std::string &Song) {
     ScopedLock lock(&m_mutex);
+    std::string filename = Artist + " - " + Song;
+    if (m_currentfile == filename)
+        return;
+
     for(auto it : m_pipes) {
-        it->Stop();
+        if (it->IsRunning())
+            it->Stop();
     }
 
     m_currentfile = filename;
 
-    for(auto it : m_pipes) {
-        it->SetFileName(filename);
-        it->Start();
+    if (!Album.empty()) {
+        for(auto it : m_pipes) {
+            it->SetFileName(filename);
+            it->Start();
+        }
     }
 }
 
 void OutputManager::PipelineAdd(std::shared_ptr<IOutputPipeline> pipeline) {
     ScopedLock lock(&m_mutex);
-    pipeline->SetFileName(m_currentfile);
-    pipeline->Start();
     m_pipes.push_back(pipeline);
 }
 
 void OutputManager::PipelineRemoveAll() {
     ScopedLock lock(&m_mutex);
     for(auto it : m_pipes) {
-        it->Stop();
+        if (it->IsRunning())
+            it->Stop();
     }
     m_pipes.clear();
 }

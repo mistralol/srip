@@ -16,6 +16,9 @@
 #include <gst/app/gstappsrc.h>
 #include <gst/app/gstappsink.h>
 
+#include <dbus/dbus.h>
+#include <gio/gio.h>
+
 #include "Time.h"
 #include "Mutex.h"
 #include "ScopedLock.h"

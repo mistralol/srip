@@ -85,8 +85,8 @@ int main(int argc, char **argv) {
     //FIXME: Find Source index from pulseaudio based on application name.
     //Then attach to that
     PulseSource Source = PulseSource();
-    DBUSMedia Watcher;
     OutputManager Output;
+    DBUSMedia Watcher = DBUSMedia(&Output);
     bool HaveOutputs = false;
 
     if (EnableOutputLame) {
@@ -109,8 +109,6 @@ int main(int argc, char **argv) {
         std::shared_ptr<IOutputPipeline> tmp = std::make_shared<OutputWav>();
         Output.PipelineAdd(tmp);
     }
-
-    //FIXME: Glue File name extraction to OutputManager
 
     Source.SetFunction(std::bind(&OutputManager::PushBuffer, &Output, std::placeholders::_1, std::placeholders::_2));
     Source.Start();
