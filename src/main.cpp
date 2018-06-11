@@ -127,6 +127,10 @@ int main(int argc, char **argv) {
 void Logger(int Type, const char *fmt, ...) {
     static Mutex mutex;
     ScopedLock lock = ScopedLock(&mutex);
+
+    if (Type == LOG_DEBUG && verbose == 0)
+        return; //Ignore debug message unless debug is turned on
+
     va_list ap;
     va_start(ap, fmt);
     int res = vfprintf(stdout, fmt, ap);
