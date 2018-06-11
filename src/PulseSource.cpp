@@ -13,7 +13,7 @@ PulseSource::PulseSource() {
 
     std::stringstream ss;
     ss << "pulsesrc";
-    ss << " ! queue name=thequeue max-size-buffers=1000 leaky=1";
+    ss << " ! queue name=thequeue max-size-buffers=5000 leaky=1";
     ss << " ! appsink name=thesink emit-signals=true";
 
     m_pipelinestr = ss.str();
