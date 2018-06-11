@@ -14,7 +14,8 @@ OutputManager::~OutputManager() {
 void OutputManager::PushBuffer(GstCaps *caps, GstBuffer *buffer) {
     ScopedLock lock(&m_mutex);
     for(auto it : m_pipes) {
-        it->PushBuffer(caps, buffer);
+        if (it->IsRunning())
+            it->PushBuffer(caps, buffer);
     }
 }
 
