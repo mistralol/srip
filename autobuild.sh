@@ -2,7 +2,10 @@
 
 echo Building
 
-make all check
+NCORES=`nproc --all`
+
+make -j$NPROC all
+make -j$NPROC check
 
 FILES=`find . -type f |egrep -E "*\.[h|c|cpp|am]"|grep -v unknown`
 
