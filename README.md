@@ -13,11 +13,12 @@ Just run the following
 
 ./autogen.sh && make
 
-Note: you need to have various packages installed to build like
+Note: you need to have these packages installed to build and run srip.
 
-autoconf autoconf-archive libtool-bin gstreamer1.0-tools libgstreamer1.0-dev gstreamer1.0-plugins-bad
-gstreamer1.0-plugins-base gstreamer1.0-plugins-good gstreamer1.0-plugins-ugly gstreamer1.0-pulseaudio
-
+autoconf autoconf-archive libtool-bin
+gstreamer1.0-tools gstreamer1.0-dev libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev 
+gstreamer1.0-plugins-base gstreamer1.0-plugins-good gstreamer1.0-plugins-bad gstreamer1.0-plugins-ugly
+gstreamer1.0-pulseaudio libjsoncpp-dev libdbus-1-dev libjson-glib-dev 
 
 # Usage
 
