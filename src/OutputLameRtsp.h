@@ -1,8 +1,8 @@
 
-class OutputScopeBasic : public IOutputPipeline {
+class OutputLameRtsp : public IOutputPipeline {
     public:
-        OutputScopeBasic();
-        ~OutputScopeBasic();
+        OutputLameRtsp(const std::string &uri);
+        ~OutputLameRtsp();
 
         void Stop();
 
@@ -11,7 +11,7 @@ class OutputScopeBasic : public IOutputPipeline {
         void OnStop(GstElement *pipeline);
 
         void PushBuffer(GstCaps *caps, GstBuffer *buffer);
-        void SetFileName(const std::string filename);
+        void SetFileName(const std::string filename) { };
         bool StopOnFileChange() { return false; }
 
     private:
@@ -19,5 +19,7 @@ class OutputScopeBasic : public IOutputPipeline {
         static GstFlowReturn OnNewSample(GstElement* object, gpointer user_data);
 
         Mutex m_mutex;
+        std::string m_uri;
         GstAppSrc *m_thesrc;
+        GstClockTime m_basetime;
 };

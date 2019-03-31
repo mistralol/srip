@@ -5,6 +5,8 @@ class OutputManager {
         OutputManager();
         ~OutputManager();
 
+        void Start();
+
         void PushBuffer(GstCaps *caps, GstBuffer *buffer);
         void SetFilename(const std::string &Album, const std::string &Artist, const std::string &Song);
 

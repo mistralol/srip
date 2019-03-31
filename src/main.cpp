@@ -14,9 +14,10 @@ static void print_help(FILE *fp, char *app) {
     fprintf(fp, " -d --debug          Switch on debug level logging\n");
     fprintf(fp, " -V --version        Print version and exit\n");
     fprintf(fp, "\n");
-    fprintf(fp, "    --output-wav         Output to wav file\n");
-    fprintf(fp, "    --output-lame        Output to mp3 file using lame encoder\n");
-    fprintf(fp, "    --output-scopebasic  Output to a basic scope (graphics)\n");
+    fprintf(fp, "    --output-wav               Output to wav file\n");
+    fprintf(fp, "    --output-lame              Output to mp3 file using lame encoder\n");
+    fprintf(fp, "    --output-lame-rtsp <url>   Output rtsp server in record mode using lame encoder\n");
+    fprintf(fp, "    --output-scopebasic        Output to a basic scope (graphics)\n");
     fprintf(fp, "\n");
 }
 
@@ -30,11 +31,13 @@ int main(int argc, char **argv) {
         {"version", 0, 0, 'v'},
         {"output-wav", 0, 0, 0},
         {"output-lame", 0, 0, 0},
+        {"output-lame-rtsp", 1, 0, 0},
         {"output-scopebasic", 0, 0, 0},
         {0, 0, 0, 0}
     };
     bool EnableOutputWav = false;
     bool EnableOutputLame = false;
+    std::string LameRtspUri = "";
     bool EnableScopeBasic = false;
 
     while( (c = getopt_long(argc, argv, opts, loptions, &longindex)) >= 0) {
@@ -46,6 +49,8 @@ int main(int argc, char **argv) {
                         EnableOutputWav = true;
                     } else if (arg == "output-lame") {
                         EnableOutputLame = true;
+                    } else if (arg == "output-lame-rtsp") {
+                        LameRtspUri = optarg;
                     } else if (arg == "output-scopebasic") {
                         EnableScopeBasic = true;
                     } else {
@@ -93,12 +98,21 @@ int main(int argc, char **argv) {
         HaveOutputs = true;
         std::shared_ptr<IOutputPipeline> tmp = std::make_shared<OutputLame>();
         Output.PipelineAdd(tmp);
+        Logger(LOG_DEBUG, "Adding Output Lame");
+    }
+
+    if (LameRtspUri.empty() == false) {
+        HaveOutputs = true;
+        std::shared_ptr<IOutputPipeline> tmp = std::make_shared<OutputLameRtsp>(LameRtspUri);
+        Output.PipelineAdd(tmp);
+        Logger(LOG_DEBUG, "Adding Output Lame Rtsp");
     }
 
     if (EnableScopeBasic) {
         HaveOutputs = true;
         std::shared_ptr<IOutputPipeline> tmp = std::make_shared<OutputScopeBasic>();
         Output.PipelineAdd(tmp);
+        Logger(LOG_DEBUG, "Adding Output Scope Basic");
     }
 
     //Default to wave file if it doesn't have any other outputs
@@ -108,11 +122,17 @@ int main(int argc, char **argv) {
         }
         std::shared_ptr<IOutputPipeline> tmp = std::make_shared<OutputWav>();
         Output.PipelineAdd(tmp);
+        Logger(LOG_DEBUG, "Adding Output wav");
     }
 
+    Logger(LOG_DEBUG, "Starting Output Manager");
+    Output.Start();
+
+    Logger(LOG_DEBUG, "Starting Source");
     Source.SetFunction(std::bind(&OutputManager::PushBuffer, &Output, std::placeholders::_1, std::placeholders::_2));
     Source.Start();
 
+    Logger(LOG_DEBUG, "Starting BUSWatch");
     Watcher.Run(); //FIXME: This currently never returns
 
     if (verbose) {

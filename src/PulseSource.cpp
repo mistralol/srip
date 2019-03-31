@@ -14,7 +14,7 @@ PulseSource::PulseSource() {
     std::stringstream ss;
     ss << "pulsesrc";
     ss << " ! queue name=thequeue max-size-buffers=5000 leaky=1";
-    ss << " ! appsink name=thesink emit-signals=true";
+    ss << " ! appsink name=thesink emit-signals=true sync=false";
 
     m_pipelinestr = ss.str();
 }
@@ -31,6 +31,7 @@ void PulseSource::SetFunction(std::function<void(GstCaps *, GstBuffer *)> func) 
 void PulseSource::OnStart(GstElement *pipeline) {
     GstElement *queue = gst_bin_get_by_name((GstBin *) pipeline, "thequeue");
     GstAppSink *sink = (GstAppSink *) gst_bin_get_by_name((GstBin *) pipeline, "thesink");
+    Logger(LOG_DEBUG, "%s", __PRETTY_FUNCTION__);
 
     if (queue == NULL) {
         LogCritical("Cannot find 'thequeue' gstreamer element");

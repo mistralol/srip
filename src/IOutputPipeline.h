@@ -8,4 +8,6 @@ class IOutputPipeline : public PipelineBasic {
 
         virtual void PushBuffer(GstCaps *caps, GstBuffer *buffer) = 0;
         virtual void SetFileName(const std::string filename) = 0;
+        virtual bool DoRestartOnNewFile() { return true; };
 };
+

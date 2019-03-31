@@ -14,6 +14,7 @@ srip_SOURCES=Mutex.cpp \
             OutputManager.cpp \
             OutputWav.cpp \
             OutputLame.cpp \
+            OutputLameRtsp.cpp \
             OutputScopeBasic.cpp \
             DBUSMedia.cpp \
             main.cpp
@@ -22,6 +23,7 @@ noinst_HEADERS=main.h \
             DBUSMedia.h \
             GstLogger.h \
             OutputLame.h \
+            OutputLameRtsp.h \
             OutputScopeBasic.h \
             PipelineBasic.h \
             ScopedLock.h \

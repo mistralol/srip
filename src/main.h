@@ -31,6 +31,7 @@
 #include "OutputManager.h"
 #include "OutputWav.h"
 #include "OutputLame.h"
+#include "OutputLameRtsp.h"
 #include "OutputScopeBasic.h"
 
 extern int verbose;
